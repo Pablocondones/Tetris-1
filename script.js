@@ -3,6 +3,8 @@ const startBtn = document.getElementById("start-btn");
 const gameContainer = document.getElementById("game-container");
 const menu = document.getElementById("menu");
 
+const colors = [null, '#FF00DE', '#00F2FF', '#00FF41', '#FFFF00', '#FF8800', '#9D00FF', '#FF0000'];
+
 let totalElapsedTime = 0;
 let lastTime = 0;
 let gameRunning = false;    

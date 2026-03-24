@@ -31,6 +31,25 @@
             </div>
         </div>
     </div>
+
+    <div id="game-over" class="overlay" style="display:none">
+        <h1 class="main-logo">GAME OVER</h1>
+        <div class="final-score-container">
+            <p class="score-label">FINAL SCORE:</p>
+            <div id="final-score" style="font-size: 48px; color: #ff00de;">0</div>
+        </div>
+        <button id="restart-btn">TRY AGAIN</button>
+    </div>
+
+    <div id="pause-overlay" class="overlay" style="display:none">
+        <h1 class="main-logo">PAUSED</h1>
+         <div class="current-score-container">
+            <p class="score-text">CURRENT SCORE:</p>
+            <div id="pause-score" style="font-size: 48px; color: #ff00de;">0</div>
+        </div>
+        <p style="color: #00f2ff; margin-top: 10px;">PRESS TO RESUME</p>
+        <button id="resume-btn" class="ui-button" style="margin-top: 20px; width: 200px;">RESUME GAME</button>
+    </div>
     
     <script src="script.js"></script>
 </body>
