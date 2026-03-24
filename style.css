@@ -1,0 +1,82 @@
+body {
+    background: #000;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Arial Black', Gadget, sans-serif;
+}
+
+#bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    z-index: -1;
+}
+
+.overlay {
+    /* Gör att menyn "svävar" över allt annat */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Centrerar allt innehåll perfekt i mitten av skärmen */
+    display: flex;
+    flex-direction: column; /* Staplar elementen vertikalt */
+    justify-content: center; /* Centrerar vertikalt */
+    align-items: center;     /* Centrerar horisontellt */
+    background: rgba(0, 0, 0, 0.85); 
+    gap: 20px; 
+}
+
+.main-logo {
+    font-size: 80px;
+    color: #00f2ff;
+    letter-spacing: 12px;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.7);
+}
+
+#start-btn {
+    background: #00f2ff;
+    color: #000;
+    border: none;
+    padding: 12px 45px;
+    font-size: 14px;
+    font-weight: 900;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(0, 242, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#game-container {
+    display: flex;
+    border: 2px solid #00f2ff;
+    background: #000;
+}
+
+#tetris {
+    border-right: 2px solid #00f2ff; /* Linjen mellan spel och UI */
+    box-shadow: 5px 0 15px rgba(0, 242, 255, 0.2); /* Lite extra glow åt höger */
+}
+
+#side-panel {
+    padding: 20px;
+    border-left: 1px solid #111;
+    color: #00f2ff;
+    pointer-events: auto;
+}
+
+#score {
+    color: #ff00de;
+}
+
+#timer {
+    color: #ff00de;
+}
