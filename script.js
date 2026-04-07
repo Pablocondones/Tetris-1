@@ -1,24 +1,30 @@
-const canvas = document.getElementById("tetris");
-const startBtn = document.getElementById("start-btn");
-const gameContainer = document.getElementById("game-container");
-const menu = document.getElementById("menu");
+document.addEventListener("DOMContentLoader", () => {
+    const canvas = document.getElementById('tetris');
+    const context = canvas.getContext('2d');
+    const nextCanvas = document.getElementById('next');
+    const nextCtx = nextCanvas.getContext('2d');
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
 
-const colors = [null, '#FF00DE', '#00F2FF', '#00FF41', '#FFFF00', '#FF8800', '#9D00FF', '#FF0000'];
+    context.scale(20, 20);
+    nextCtx.scale(20, 20);
 
-let totalElapsedTime = 0;
-let lastTime = 0;
-let gameRunning = false;    
+    const colors = [null, '#FF00DE', '#00F2FF', '#00FF41', '#FFFF00', '#FF8800', '#9D00FF', '#FF0000'];
 
-function startGame() {
-    totalElapsedTime = 0;
-    lastTime = performance.now();
-    gameRunning = true;
+    let totalElapsedTime = 0;
+    let lastTime = 0;
+    let gameRunning = false;    
+
+    function startGame() {
+        totalElapsedTime = 0;
+        lastTime = performance.now();
+        gameRunning = true;
     
-    menu.style.display = "none";
-    gameContainer.style.display = "flex";
-    gameContainer.style.opacity = "1";
+        menu.style.display = "none";
+        gameContainer.style.display = "flex";
+        gameContainer.style.opacity = "1";
     
-    requestAnimationFrame(update);
+        requestAnimationFrame(update);
 }
 
 startBtn.addEventListener("click", startGame);
@@ -42,3 +48,4 @@ function update(time = 0) {
         requestAnimationFrame(update);
     }
 }
+});
