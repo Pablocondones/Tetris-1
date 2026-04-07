@@ -33,6 +33,35 @@ document.addEventListener("DOMContentLoader", () => {
         if (type === 'T') return [[0,7,0]],[[7,7,7]],[[0,0,0]];
     }   
 
+    function rotate(matrix) {
+    for (let y = 0; y < matrix.length; ++y) {
+        for (let x = 0; x < y; ++x) {
+            [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+        }
+    }
+    matrix.forEach(row => row.reverse());
+   }
+
+    function collide(arena, player) {
+        const [m, o] = [player.matrix, player.pos];
+        for (let y = 0; y < m.length; ++y) {
+            for (let x = 0; x < m[y].length; ++x) {
+                if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function merge(arena, player) {
+        player.matrix.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) arena[y + player.pos.y][x + player.pos.x] = value;
+            });
+        });
+    }
+
     function startGame() {
         totalElapsedTime = 0;
         lastTime = performance.now();
@@ -66,4 +95,4 @@ function update(time = 0) {
         requestAnimationFrame(update);
     }
 }
-});
+}); 
