@@ -11,6 +11,12 @@ document.addEventListener("DOMContentLoader", () => {
 
     const colors = [null, '#FF00DE', '#00F2FF', '#00FF41', '#FFFF00', '#FF8800', '#9D00FF', '#FF0000'];
 
+    let arena = createMatrix(12, 24);
+    const player = { pos: {x: 0, y: 0}, matrix: null, next: null, score: 0 };
+    let totalElapsedTime = 0;
+    let lastTime = 0;
+    let gameRunning = false; 
+
     function createMatrix(w, h){
         const matrix = [];
         while (h--) matrix.push(new Array (w).fill(0));
@@ -25,13 +31,7 @@ document.addEventListener("DOMContentLoader", () => {
         if (type === 'Z') return [[5,5,0]],[[0,5,5]],[[0,0,0]];
         if (type === 'S') return [[0,6,6]],[[6,6,0]],[[0,0,0]];
         if (type === 'T') return [[0,7,0]],[[7,7,7]],[[0,0,0]];
-    }
-
-    let arena = createMatrix(12, 24);
-    const player = { pos: {x: 0, y: 0}, matrix: null, next: null, score: 0 };
-    let totalElapsedTime = 0;
-    let lastTime = 0;
-    let gameRunning = false;    
+    }   
 
     function startGame() {
         totalElapsedTime = 0;
