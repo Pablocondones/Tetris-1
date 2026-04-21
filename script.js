@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoader", () => {
+document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('tetris');
     const context = canvas.getContext('2d');
     const nextCanvas = document.getElementById('next');
@@ -24,13 +24,13 @@ document.addEventListener("DOMContentLoader", () => {
     }
 
     function createPiece(type){
-        if (type === 'I') return [[0,1,0,0]],[[0,1,0,0]],[[0,1,0,0]],[[0,1,0,0]];
-        if (type === 'L') return [[0,2,0]],[[0,2,0]],[[0,2,2]];
-        if (type === 'J') return [[0,3,0]],[[0,3,0]],[[3,3,0]];
-        if (type === 'O') return [[4,4]],[[4,4]];
-        if (type === 'Z') return [[5,5,0]],[[0,5,5]],[[0,0,0]];
-        if (type === 'S') return [[0,6,6]],[[6,6,0]],[[0,0,0]];
-        if (type === 'T') return [[0,7,0]],[[7,7,7]],[[0,0,0]];
+        if (type === 'I') return [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]];
+        if (type === 'L') return [[0,2,0],[0,2,0],[0,2,2]];
+        if (type === 'J') return [[0,3,0],[0,3,0],[3,3,0]];
+        if (type === 'O') return [[4,4],[4,4]];
+        if (type === 'Z') return [[5,5,0],[0,5,5],[0,0,0]];
+        if (type === 'S') return [[0,6,6],[6,6,0],[0,0,0]];
+        if (type === 'T') return [[0,7,0],[7,7,7],[0,0,0]];
     }   
 
     function rotate(matrix) {
@@ -62,19 +62,62 @@ document.addEventListener("DOMContentLoader", () => {
         });
     }
 
-    function startGame() {
-        totalElapsedTime = 0;
-        lastTime = performance.now();
-        gameRunning = true;
-    
-        menu.style.display = "none";
-        gameContainer.style.display = "flex";
-        gameContainer.style.opacity = "1";
-    
-        requestAnimationFrame(update);
+    function arenaSweep() {
+        let rowCount = 0;
+        outer: for (let y = arena.length - 1; y > 0; --y) {
+            for (let x = 0; x < arena[y].length; ++x) {
+                if (arena[y][x] === 0) continue outer;
+            }
+            const row = arena.splice(y, 1)[0].fill(0);
+            arena.unshift(row);
+            ++y;
+            rowCount++;
+        }
+        if (rowCount > 0) {
+            const points = {1: 100, 2: 300, 3: 500, 4: 800};
+            player.score += points[rowCount] || 0;
+            document.getElementById('score').innerText = player.score;
+        }
     }
 
-startBtn.addEventListener("click", startGame);
+    function playerReset() { 
+        const pieces = "ILJOTSZ";
+        if (!player.next) player.next = createPiece(pieces[Math.random() * 7 | 0]);
+        player.matrix = player.next;
+        player.next = createPiece(pieces[Math.random() * 7 | 0]);
+        player.pos.y = 1;
+        player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+
+        if (collide(arena, player)) {
+        gameRunning = false; 
+        document.getElementById('final-score').innerText = player.score; 
+        document.getElementById('game-over').style.display = 'flex'; 
+        document.getElementById('game-container').style.opacity = "0.2"; 
+        }
+        drawNext();
+    }
+
+    function startGame() {
+        const gameContainer = document.getElementById('game-container');
+        gameContainer.style.display = 'flex';
+        gameContainer.style.opacity = '1';
+
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('game-over').style.display = 'none';
+        document.getElementById('pause-overlay').style.display = 'none';
+
+        arena.forEach(row => row.fill(0));
+        player.score = 0;
+        player.next = null;
+        dropInterval = 1000;
+        totalElapsedTime = 0;
+        gameRunning = true;
+        gamePaused = false;
+        startTime = Date.now();
+    
+        document.getElementById('score').innerText = "0";
+    }
+
 
 function update(time = 0) {
     if (gameRunning) {
@@ -95,4 +138,6 @@ function update(time = 0) {
         requestAnimationFrame(update);
     }
 }
+
+    document.getElementById('start-btn').addEventListener('click', startGame);
 }); 
