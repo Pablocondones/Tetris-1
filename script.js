@@ -80,6 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function drawMatrix(matrix, offset, ctx, isGhost = false) {
+        matrix.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) {
+                    ctx.fillStyle = isGhost ? "rgba(255, 255, 255, 0.1)" : colors[value];
+                    ctx.fillRect(x + offset.x, y + offset.y, 1, 1);
+                    ctx.strokeStyle = "#000000";
+                    ctx.lineWidth = 0.035;
+                    ctx.strokeRect(x + offset.x, y + offset.y, 1, 1);
+                }
+            });
+        });
+    }
+
+    function drawNext() {
+        nextCtx.fillstyle = "#000";
+        nextCtx.fillrect(0, 0, nextCanvas.width, nextCanvas.height);
+        drawMatrix(player.next, {x: 0.5, y: 0}, nextCtx);
+    }
+
     function playerReset() { 
         const pieces = "ILJOTSZ";
         if (!player.next) player.next = createPiece(pieces[Math.random() * 7 | 0]);
