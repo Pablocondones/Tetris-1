@@ -99,8 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawNext() {
-        nextCtx.fillstyle = "#000";
-        nextCtx.fillrect(0, 0, nextCanvas.width, nextCanvas.height);
+        nextCtx.fillStyle = "#000";
+        nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
         drawMatrix(player.next, {x: 0.5, y: 0}, nextCtx);
     }
 
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             context.fillStyle = "#000";
-            context.fillRect(0, 0, canvas.weidth, canvas.height);
+            context.fillRect(0, 0, canvas.width, canvas.height);
 
             // Röda linjen på toppen
             context.fillStyle = 'rgb(255, 0, 0)';
@@ -180,10 +180,28 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
             // Om spelet är pausat måste vi fortfarande uppdatera lastTime
             // så att deltaTime inte blir gigantisk när vi startar igen
-            lastTime = time;
+            lastTime = performance.now();
         }
         requestAnimationFrame(update);
     }    
 
+    document.getElementById('side-pause-btn').addEventListener('click', () => {
+        if (!gameRunning) return;
+        gamePaused = true;
+        document.getElementById('pause-score').innerText = player.score;
+        document.getElementById('pause-overlay').style.display = 'flex';
+        document.getElementById('game-container').style.opacity = "0.5";
+    });
+
+    document.getElementById('resume-btn').addEventListener('click', () => {
+        gamePaused = false; 
+        document.getElementById('pause-overlay').style.display = 'none';
+        document.getElementById('game-container').style.opacity = "1";
+        lastTime = performance.now();
+    });
+
     document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('restart-btn').addEventListener('click', startGame);
+
+    update();
 });
