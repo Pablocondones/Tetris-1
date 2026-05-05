@@ -144,25 +144,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-function update(time = 0) {
-    if (gameRunning) {
-        const deltaTime = time - lastTime;
-        lastTime = time;
+    function update(time = 0) {
+        if (gameRunning && !gamePaused) {
+            const deltaTime = time - lastTime;
+            lastTime = time;
+            dropCounter += deltaTime;
 
-        totalElapsedTime += deltaTime;
-        const totalSeconds = Math.floor(totalElapsedTime / 1000);
+            totalElapsedTime += deltaTime;
+            const totalSeconds = Math.floor(totalElapsedTime / 1000);
+            const displayMinutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const displaySeconds = (totalSeconds % 60).toString().padStart(2, '0');
         
-        const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-        const secs = (totalSeconds % 60).toString().padStart(2, '0');
-        
-        const timerElement = document.getElementById('timer');
-        if (timerElement) {
-            timerElement.innerText = `${mins}:${secs}`;
+            document.getElementById('timer').innerText = `${displayMinutes}:${displaySeconds}`;
+            
+            if (dropCounter > dropInterval) {
+                player.pos.y++;
+                if (collide(arena, player)) {
+                    player.pos.y--;
+                    merge(arena, player);
+                    playerReset();
+                    arenaSweep();
+                }
+                dropCounter = 0;
+            }
+
+            context.fillStyle = "#000";
+            context.fillRect(0, 0, canvas.weidth, canvas.height);
+
+            // Röda linjen på toppen
+            context.fillStyle = 'rgb(255, 0, 0)';
+            context.fillRect(0, 1, 12, 0.1);
+
+            drawMatrix(arena, {x: 0, y: 0}, context);
+            drawMatrix(player.matrix, player.pos, context);
+            } else {
+            // Om spelet är pausat måste vi fortfarande uppdatera lastTime
+            // så att deltaTime inte blir gigantisk när vi startar igen
+            lastTime = time;
         }
-
         requestAnimationFrame(update);
-    }
-}
+    }    
 
     document.getElementById('start-btn').addEventListener('click', startGame);
-}); 
+});
