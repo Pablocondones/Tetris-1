@@ -14,8 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let arena = createMatrix(12, 24);
     const player = { pos: {x: 0, y: 0}, matrix: null, next: null, score: 0 };
     let totalElapsedTime = 0;
+    let startTime = 0;
     let lastTime = 0;
     let gameRunning = false; 
+    let gamePaused = false; 
+    let dropCounter = 0;
+    let dropInterval = 1000;
 
     function createMatrix(w, h){
         const matrix = [];
@@ -136,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startTime = Date.now();
     
         document.getElementById('score').innerText = "0";
+        playerReset();
     }
 
 
