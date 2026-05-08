@@ -21,6 +21,54 @@ document.addEventListener('DOMContentLoaded', () => {
     let dropCounter = 0;
     let dropInterval = 1000;
 
+    let particles = [];
+    function resize() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+        constructor(x, y) {
+            this.x = x || Math.random() * bgCanvas.width;
+            this.y = y || Math.random() * bgCanvas.height;
+            this.color = colors[Math.floor(Math.random() *7) +1];
+            this.size = Math.random() * 2 + 1;
+            this.opacity = 0;
+            this.life = 0;
+            this.maxLife = 120 + Math.random() * 60;
+            this.velX = (Math.random() - 0.5) * 0.5;
+            this.velY = (Math.random() - 0.5) * 0.5;
+        }
+        update() {
+            this.life++;
+            this.x += this.velX;
+            this.y += this.velY;
+
+            //Bara normal fadinglogik för lugna prickar
+            if (this.life < this.maxLife * 0.2) {
+                this.opacity += 0.05;
+            } else if (this.life > this.maxLife * 0.7) {
+                this.opacity -= 0.03;
+            }
+        }
+
+        draw() {
+            if (this.opacity <= 0) return;
+            bgCtx.save();
+            bgCtx.globalAlpha = this.opacity;
+            bgCtx.fillStyle = this.color;
+            bgCtx.shadowBlur = 10;
+            bgCtx.shadowColor = this.color;
+            bgCtx.beginPath();
+            bgCtx.arc(this.x, this.y, this.size, 0, Math.PI *2);
+            bgCtx.fill();
+            bgCtx.restore();
+        } 
+    }
+
+
     function createMatrix(w, h){
         const matrix = [];
         while (h--) matrix.push(new Array (w).fill(0));
@@ -200,6 +248,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function update(time = 0) {
+        //Handle background dots
+        bgCtx.fillStyle = "#000";
+        bgCtx.fillRect(0, 0, bgCanvas.wdith, bgCanvas.height);
+        if (particles.length < 400 && Math.random() < 0.5) particles.push(new Particle());
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].life > particles[i].maxLife) particles.splice(i, 1);
+            }
+            
         if (gameRunning && !gamePaused) {
             const deltaTime = time - lastTime;
             lastTime = time;
