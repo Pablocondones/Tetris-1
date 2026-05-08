@@ -143,6 +143,61 @@ document.addEventListener('DOMContentLoaded', () => {
         playerReset();
     }
 
+    document.addEventListener('keydown', e => {
+        if (!gameRunning || gamePaused) return;
+        if(e.keyCode === 37) {
+            player.pos.x--;
+            if (collide(arena, player)) player.pos.x++;
+        }
+        if(e.keyCode === 39) {
+            player.pos.x++;
+            if (collide(arena, player)) player.pos.x--;
+        } else if (e.keyCode === 40) {
+            player.pos.y++;
+            if (collide(arena, player)) {
+                player.pos.y--;
+                merge(arena, player);
+                playerReset();
+                arenaSweep();
+            } else {
+                player.score += 1;
+                document.getElementById('score').innerText = player.score;
+            }
+            dropcounter = 0;
+
+        }
+        else if (e.keyCode === 38) {
+            const oldX = player.pos.x;
+            rotate(player.matrix);
+            let offset = 1;
+            while (collide(arena, player)) {
+                player.pos.x += offset;
+                offset = -(offset + (offset > 0 ? 1 : -1));
+                if (offset > player.matrix[0].length) {
+                    rotate(player.matrix); rotate(player.matrix); rotate(player.matrix);
+                    player.pos.x = oldX;
+                    return;
+                }
+            }
+        }
+        else if (e.keyCode === 32) {
+            e.preventDefault();
+
+            let dropPoints = 0;
+            while (!collide(arena, player)) {
+                player.pos.y++;
+                dropPoints++;
+            }
+            player.pos.y--;
+            player.score += (dropPoints - 1) * 2; 
+            document.getElementById('score').innerText = player.score;
+            merge(arena, player);
+            playerReset();
+            arenaSweep();
+            dropCounter = 0;
+        }
+    });
+
 
     function update(time = 0) {
         if (gameRunning && !gamePaused) {
