@@ -11,16 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const colors = [null, '#FF00DE', '#00F2FF', '#00FF41', '#FFFF00', '#FF8800', '#9D00FF', '#FF0000'];
 
-    let arena = createMatrix(12, 24);
-    const player = { pos: {x: 0, y: 0}, matrix: null, next: null, score: 0 };
-    let totalElapsedTime = 0;
-    let startTime = 0;
-    let lastTime = 0;
-    let gameRunning = false; 
-    let gamePaused = false; 
-    let dropCounter = 0;
-    let dropInterval = 1000;
+    
 
+    //background engine
     let particles = [];
     function resize() {
         bgCanvas.width = window.innerWidth;
@@ -29,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resize);
     resize();
 
+    //Hanterar bakgrundens visuella effekter genom att skapa och animera enskilda partiklar med slumpmässig färg och livslängd.
     class Particle {
         constructor(x, y) {
             this.x = x || Math.random() * bgCanvas.width;
@@ -37,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.size = Math.random() * 2 + 1;
             this.opacity = 0;
             this.life = 0;
-            this.maxLife = 120 + Math.random() * 60;
+            this.maxLife = 120 + Math.random() * 60; //ca 2 - 3 sekunder
             this.velX = (Math.random() - 0.5) * 0.5;
             this.velY = (Math.random() - 0.5) * 0.5;
         }
@@ -68,6 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } 
     }
 
+    //Tetris logic
+    let arena = createMatrix(12, 24); // 12 columns to give room, game is 10x20
+    const player = { pos: {x: 0, y: 0}, matrix: null, next: null, score: 0 };
+    let totalElapsedTime = 0;
+    let startTime = 0;
+    let lastTime = 0;
+    let gameRunning = false; 
+    let gamePaused = false; 
+    let dropCounter = 0;
+    let dropInterval = 1000;
 
     function createMatrix(w, h){
         const matrix = [];
@@ -94,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     matrix.forEach(row => row.reverse());
    }
 
+   //Kontrollerar om spelarens nuvarande block krockar med existerande block i arenan eller spelplanens väggar
     function collide(arena, player) {
         const [m, o] = [player.matrix, player.pos];
         for (let y = 0; y < m.length; ++y) {
@@ -114,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    //Identifierar och tar bort fyllda rader, flyttar ner ovanliggande block och uppdaterar spelarens poäng
     function arenaSweep() {
         let rowCount = 0;
         outer: for (let y = arena.length - 1; y > 0; --y) {
@@ -295,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // så att deltaTime inte blir gigantisk när vi startar igen
             lastTime = performance.now();
         }
-        requestAnimationFrame(update);
+        requestAnimationFrame(update); //Huvudloopen som driver spelets animationer och logik synkroniserat med skärmens uppdateringsfrekvens
     }    
 
     document.getElementById('side-pause-btn').addEventListener('click', () => {
