@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         constructor(x, y) {
             this.x = x || Math.random() * bgCanvas.width;
             this.y = y || Math.random() * bgCanvas.height;
-            this.color = colors[Math.floor(Math.random() *7) +1];
+            this.color = colors[Math.floor(Math.random() * 7) + 1];
             this.size = Math.random() * 2 + 1;
             this.opacity = 0;
             this.life = 0;
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function update(time = 0) {
         //Handle background dots
         bgCtx.fillStyle = "#000";
-        bgCtx.fillRect(0, 0, bgCanvas.wdith, bgCanvas.height);
+        bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
         if (particles.length < 400 && Math.random() < 0.5) particles.push(new Particle());
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].update();
