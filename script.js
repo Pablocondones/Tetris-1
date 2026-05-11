@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         drawMatrix(player.next, {x: 0.5, y: 0}, nextCtx);
     }
 
+    ////kod för att skapa nytt block
     function playerReset() { 
         const pieces = "ILJOTSZ";
         if (!player.next) player.next = createPiece(pieces[Math.random() * 7 | 0]);
@@ -167,23 +168,26 @@ document.addEventListener('DOMContentLoaded', () => {
         player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
 
         if (collide(arena, player)) {
-        gameRunning = false; 
-        document.getElementById('final-score').innerText = player.score; 
-        document.getElementById('game-over').style.display = 'flex'; 
-        document.getElementById('game-container').style.opacity = "0.2"; 
+        gameRunning = false; //stoppa spelet
+        document.getElementById('final-score').innerText = player.score; //skicka poängen till game over skärmen
+        document.getElementById('game-over').style.display = 'flex'; //visa game over menyn
+        document.getElementById('game-container').style.opacity = "0.2"; // Gör spelet mörkare i bakgrunden när man förlorar
         }
         drawNext();
     }
 
     function startGame() {
+        // 1. Återställ synligheten på spelplanen (ta bort skuggan)
         const gameContainer = document.getElementById('game-container');
         gameContainer.style.display = 'flex';
-        gameContainer.style.opacity = '1';
+        gameContainer.style.opacity = '1';  // Detta fixar "shadowy" problemet
 
+        // 2. Dölj alla menyer
         document.getElementById('menu').style.display = 'none';
         document.getElementById('game-over').style.display = 'none';
         document.getElementById('pause-overlay').style.display = 'none';
 
+        // 3. Återställ speldatan
         arena.forEach(row => row.fill(0));
         player.score = 0;
         player.next = null;
@@ -197,16 +201,17 @@ document.addEventListener('DOMContentLoaded', () => {
         playerReset();
     }
 
+    // Controls
     document.addEventListener('keydown', e => {
         if (!gameRunning || gamePaused) return;
-        if(e.keyCode === 37) {
+        if(e.keyCode === 37) { // Left
             player.pos.x--;
             if (collide(arena, player)) player.pos.x++;
         }
-        if(e.keyCode === 39) {
+        if(e.keyCode === 39) { // Right
             player.pos.x++;
             if (collide(arena, player)) player.pos.x--;
-        } else if (e.keyCode === 40) {
+        } else if (e.keyCode === 40) { // Down Arrow
             player.pos.y++;
             if (collide(arena, player)) {
                 player.pos.y--;
@@ -214,13 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 playerReset();
                 arenaSweep();
             } else {
+                // Manual drop bonus
                 player.score += 1;
                 document.getElementById('score').innerText = player.score;
             }
-            dropcounter = 0;
+            dropcounter = 0; // Reset the automatic timer so it doesn't double-drop
 
         }
-        else if (e.keyCode === 38) {
+        else if (e.keyCode === 38) { // Up (Rotate)
             const oldX = player.pos.x;
             rotate(player.matrix);
             let offset = 1;
@@ -235,14 +241,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         else if (e.keyCode === 32) {
-            e.preventDefault();
+            e.preventDefault(); // Hindrar sidan från att scrolla ner när du trycker space
 
             let dropPoints = 0;
             while (!collide(arena, player)) {
                 player.pos.y++;
                 dropPoints++;
             }
-            player.pos.y--;
+            player.pos.y--; // Backa ett steg eftersom loopen stannar vid krock
+            // Ge extra poäng för Hard Drop (2 poäng per rad är standard)
             player.score += (dropPoints - 1) * 2; 
             document.getElementById('score').innerText = player.score;
             merge(arena, player);
@@ -304,21 +311,24 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(update); //Huvudloopen som driver spelets animationer och logik synkroniserat med skärmens uppdateringsfrekvens
     }    
 
+    // KNAPP 1: Pausa (den lilla knappen under timern)
     document.getElementById('side-pause-btn').addEventListener('click', () => {
         if (!gameRunning) return;
-        gamePaused = true;
+        gamePaused = true; // Sätt paus till sant
         document.getElementById('pause-score').innerText = player.score;
         document.getElementById('pause-overlay').style.display = 'flex';
         document.getElementById('game-container').style.opacity = "0.5";
     });
 
+    // KNAPP 2: Fortsätt (den stora knappen i paus-menyn)
     document.getElementById('resume-btn').addEventListener('click', () => {
-        gamePaused = false; 
+        gamePaused = false; // Sätt paus till falskt
         document.getElementById('pause-overlay').style.display = 'none';
         document.getElementById('game-container').style.opacity = "1";
-        lastTime = performance.now();
-    });
+        lastTime = performance.now(); // Starta om klockan så blocket inte hoppar
+    }); 
 
+    // Start och Restart knappar
     document.getElementById('start-btn').addEventListener('click', startGame);
     document.getElementById('restart-btn').addEventListener('click', startGame);
 
